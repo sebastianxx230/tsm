@@ -6,11 +6,14 @@ interface ClientPortalProps {
 }
 
 const macroStages = [
-  { name: 'Ingeniería y Planos', status: 'done', date: 'Completado - 25 Jun 2026' },
-  { name: 'Aprovisionamiento de Materiales', status: 'done', date: 'Completado - 28 Jun 2026' },
-  { name: 'Fabricación en Planta', status: 'active', date: 'En progreso - 60% completado' },
-  { name: 'Control de Calidad', status: 'pending', date: 'Programado - 14 Jul 2026' },
-  { name: 'Despacho y Entrega', status: 'pending', date: 'Estimado - 18 Jul 2026' },
+  { label: 'Cotización Comercial', status: 'completed', date: '10 Jun 2026' },
+  { label: 'Ingeniería y Planos', status: 'completed', date: '15 Jun 2026' },
+  { label: 'Logística de Entrada', status: 'completed', date: '18 Jun 2026' },
+  { label: 'Planeamiento', status: 'completed', date: '20 Jun 2026' },
+  { label: 'Fabricación en Planta', status: 'current', date: 'En progreso' },
+  { label: 'Control de Calidad', status: 'pending', date: '-' },
+  { label: 'Almacén Final', status: 'pending', date: '-' },
+  { label: 'Despacho a Obra', status: 'pending', date: '-' },
 ];
 
 const stageConfig = {
