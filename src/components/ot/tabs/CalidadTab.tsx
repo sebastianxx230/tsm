@@ -1,5 +1,5 @@
 import { ClipboardCheck, FileCheck2, Camera } from 'lucide-react';
-import { checklistCalidad } from '../../data/mockData';
+import { checklistCalidad } from '../../../data/mockData';
 
 export default function CalidadTab() {
   return (
