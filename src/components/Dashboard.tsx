@@ -1,142 +1,68 @@
-import { Plus, Factory, Truck, Scale, AlertTriangle, ArrowUpRight, Filter, Download } from 'lucide-react';
-import { ordenes, type OTStatus } from '../data/mockData';
-import { usePermissions } from '../context/PermissionsContext';
+import { ArrowRight, Activity } from 'lucide-react';
+import { ordenes } from '../data/mockData';
 
 interface DashboardProps {
   onSelectOT: (code: string) => void;
   onCreateOT: () => void;
 }
 
-const statusStyles: Record<OTStatus, string> = {
-  Producción: 'bg-blue-100 text-blue-800',
-  Ingeniería: 'bg-purple-100 text-purple-800',
-  Logística: 'bg-amber-100 text-amber-800',
-  Calidad: 'bg-teal-100 text-teal-800',
-  Despachado: 'bg-emerald-100 text-emerald-800',
-  Planeamiento: 'bg-indigo-100 text-indigo-800',
-  Comercial: 'bg-pink-100 text-pink-800',
-};
-
-const kpis = [
-  { label: 'OTs en Producción', value: '6', icon: Factory, iconBg: 'bg-blue-50', iconColor: 'text-blue-600', trend: '+2 esta semana', trendColor: 'text-emerald-600' },
-  { label: 'Despachos Programados', value: '3', icon: Truck, iconBg: 'bg-amber-50', iconColor: 'text-amber-600', trend: 'Próximos 7 días', trendColor: 'text-gray-500' },
-  { label: 'Tonelaje en Planta', value: '204 T', icon: Scale, iconBg: 'bg-teal-50', iconColor: 'text-teal-600', trend: '+18 T vs. ayer', trendColor: 'text-emerald-600' },
-  { label: 'Alertas Críticas', value: '1', icon: AlertTriangle, iconBg: 'bg-rose-50', iconColor: 'text-rose-600', trend: 'Material retrasado', trendColor: 'text-rose-600' },
-];
-
-function formatDate(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' });
-}
-
 export default function Dashboard({ onSelectOT, onCreateOT }: DashboardProps) {
-  const { can } = usePermissions();
-  const canCreate = can('planeamiento', 'edit') || can('produccion', 'edit');
-
   return (
-    <div className="animate-fadeIn">
-      <div className="flex items-start justify-between mb-6">
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Panel de Control Operativo</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Resumen general de la planta productiva - 1 de Julio, 2026</p>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-gray-900">Trazabilidad de Órdenes de Trabajo</h1>
+            <span className="bg-brand-100 text-brand-800 text-xs font-semibold px-2.5 py-1 rounded-full border border-brand-200 shadow-sm flex items-center gap-1">
+              <Activity className="w-3 h-3" />
+              Seguimiento unitario por OT
+            </span>
+          </div>
+          <p className="text-gray-500 mt-1 text-sm">Monitoreo en 8 etapas: Comercial {'>'} Ingeniería {'>'} Logística {'>'} Planeamiento {'>'} Producción {'>'} Calidad {'>'} Almacén {'>'} Despacho</p>
         </div>
-        {canCreate && (
-          <button
-            onClick={onCreateOT}
-            className="flex items-center gap-2 h-9 px-4 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors"
-          >
-            <Plus className="w-4 h-4" strokeWidth={2.5} />
-            Crear OT
-          </button>
-        )}
+        <button onClick={onCreateOT} className="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm">
+          + Nueva OT
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {kpis.map((kpi) => {
-          const Icon = kpi.icon;
-          return (
-            <div
-              key={kpi.label}
-              className="bg-white rounded-xl border border-gray-200 shadow-card p-5 hover:shadow-cardHover transition-shadow"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className={`w-10 h-10 rounded-lg ${kpi.iconBg} flex items-center justify-center`}>
-                  <Icon className={`w-5 h-5 ${kpi.iconColor}`} strokeWidth={2} />
-                </div>
-                <ArrowUpRight className="w-4 h-4 text-gray-300" />
-              </div>
-              <div className="text-2xl font-bold text-gray-900 tracking-tight">{kpi.value}</div>
-              <div className="text-xs text-gray-500 mt-0.5">{kpi.label}</div>
-              <div className={`text-[11px] font-medium mt-2 ${kpi.trendColor}`}>{kpi.trend}</div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="bg-white rounded-xl border border-gray-200 shadow-card overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-          <div>
-            <h2 className="text-base font-semibold text-gray-900">Órdenes de Trabajo Activas</h2>
-            <p className="text-xs text-gray-500 mt-0.5">{ordenes.length} órdenes en curso</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 h-8 px-3 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-              <Filter className="w-3.5 h-3.5" />
-              Filtrar
-            </button>
-            <button className="flex items-center gap-1.5 h-8 px-3 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-              <Download className="w-3.5 h-3.5" />
-              Exportar
-            </button>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto scrollbar-thin">
-          <table className="w-full text-sm">
+      <div className="bg-white rounded-xl shadow-card border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50/80 border-b border-gray-200">
-                <th className="text-left font-semibold text-gray-600 px-5 py-2.5 text-xs uppercase tracking-wider">OT</th>
-                <th className="text-left font-semibold text-gray-600 px-5 py-2.5 text-xs uppercase tracking-wider">Cliente</th>
-                <th className="text-left font-semibold text-gray-600 px-5 py-2.5 text-xs uppercase tracking-wider">Proyecto / Site</th>
-                <th className="text-left font-semibold text-gray-600 px-5 py-2.5 text-xs uppercase tracking-wider">Estado</th>
-                <th className="text-left font-semibold text-gray-600 px-5 py-2.5 text-xs uppercase tracking-wider min-w-[180px]">Avance</th>
-                <th className="text-left font-semibold text-gray-600 px-5 py-2.5 text-xs uppercase tracking-wider">Fecha Estimada</th>
+              <tr className="bg-gray-50 border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500">
+                <th className="p-4 font-semibold">Código OT</th>
+                <th className="p-4 font-semibold">Proyecto / Cliente</th>
+                <th className="p-4 font-semibold">Etapa Actual</th>
+                <th className="p-4 font-semibold text-center">Avance</th>
+                <th className="p-4 font-semibold text-right">Acción</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 text-sm">
               {ordenes.map((ot) => (
-                <tr
-                  key={ot.code}
-                  onClick={() => onSelectOT(ot.code)}
-                  className="hover:bg-brand-50/40 cursor-pointer transition-colors group"
-                >
-                  <td className="px-5 py-3">
-                    <span className="font-semibold text-brand-700 group-hover:text-brand-800 font-mono text-[13px]">
-                      {ot.code}
-                    </span>
+                <tr key={ot.code} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => onSelectOT(ot.code)}>
+                  <td className="p-4 font-mono font-medium text-brand-700">{ot.code}</td>
+                  <td className="p-4">
+                    <p className="font-medium text-gray-900">{ot.proyecto}</p>
+                    <p className="text-gray-500 text-xs">{ot.cliente}</p>
                   </td>
-                  <td className="px-5 py-3 text-gray-700">{ot.cliente}</td>
-                  <td className="px-5 py-3">
-                    <div className="text-gray-900 font-medium">{ot.proyecto}</div>
-                    <div className="text-xs text-gray-500">{ot.site}</div>
-                  </td>
-                  <td className="px-5 py-3">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[ot.estado]}`}>
+                  <td className="p-4">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
                       {ot.estado}
                     </span>
                   </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden min-w-[80px]">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-brand-500 to-teal-500 transition-all duration-500"
-                          style={{ width: `${ot.avance}%` }}
-                        />
+                  <td className="p-4">
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-full bg-gray-200 rounded-full h-2 max-w-[100px]">
+                        <div className="bg-brand-600 h-2 rounded-full" style={{ width: `${ot.avance}%` }}></div>
                       </div>
-                      <span className="text-xs font-semibold text-gray-600 w-9 text-right">{ot.avance}%</span>
+                      <span className="text-xs text-gray-500 font-medium w-8">{ot.avance}%</span>
                     </div>
                   </td>
-                  <td className="px-5 py-3 text-gray-600 text-[13px]">{formatDate(ot.fechaEstimada)}</td>
+                  <td className="p-4 text-right">
+                    <button className="text-gray-400 hover:text-brand-600 transition-colors">
+                      <ArrowRight className="w-5 h-5 ml-auto" />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
